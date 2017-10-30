@@ -160,6 +160,7 @@ def _app_layer_impl(ctx, runfiles=None, emptyfiles=None):
     # not clear at this time whether that is an invariant
     # broadly in Bazel.
     if _final_file_path(ctx, f) not in available
+    if '/_middlemen/' not in f.path
   }
 
   empty_files = [
