@@ -180,7 +180,7 @@ def _jar_app_layer_impl(ctx):
     ctx,
     # We use all absolute paths.
     directory="/", file_map=file_map,
-    entrypoint=entrypoint)
+    entrypoint=entrypoint, cmd=ctx.attr.args)
 
 jar_app_layer = rule(
     attrs = dict(_container.image.attrs.items() + {
@@ -219,7 +219,7 @@ jar_app_layer = rule(
 )
 
 def java_image(name, base=None, main_class=None,
-               deps=[], runtime_deps=[], layers=[], jvm_flags=[],
+               deps=[], runtime_deps=[], layers=[], jvm_flags=[], args=None,
                **kwargs):
   """Builds a container image overlaying the java_binary.
 
@@ -230,7 +230,7 @@ def java_image(name, base=None, main_class=None,
   """
   binary_name = name + ".binary"
 
-  native.java_binary(name=binary_name, main_class=main_class,
+  native.java_binary(name=binary_name, main_class=main_class, args=args,
                      # If the rule is turning a JAR built with java_library into
                      # a binary, then it will appear in runtime_deps.  We are
                      # not allowed to pass deps (even []) if there is no srcs
@@ -246,7 +246,7 @@ def java_image(name, base=None, main_class=None,
 
   visibility = kwargs.get('visibility', None)
   jar_app_layer(name=name, base=base, binary=binary_name,
-                 main_class=main_class, jvm_flags=jvm_flags,
+                 main_class=main_class, args=args, jvm_flags=jvm_flags,
                  deps=deps, runtime_deps=runtime_deps, layers=layers,
                  visibility=visibility)
 
